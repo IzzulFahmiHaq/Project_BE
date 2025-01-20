@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin")  // Sesuaikan endpoint untuk admin
+@RequestMapping("/api")  // Sesuaikan endpoint untuk admin
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
@@ -32,15 +32,16 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {  // Ganti LoginRequest menjadi AdminLoginRequest
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            Map<String, Object> response = authService.authenticate(loginRequest);  // Ganti authenticate menjadi authenticateAdmin
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            Map<String, Object> response = authService.authenticate(loginRequest);
+            return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Email atau password salah."));
         } catch (Exception e) {
             logger.error("Error during login: ", e);
-            return new ResponseEntity<>("Server error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Terjadi kesalahan di server."));
         }
     }
+
 }

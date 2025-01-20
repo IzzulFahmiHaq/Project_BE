@@ -10,11 +10,11 @@ import java.util.Optional;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
 
-    @Query(value = "SELECT * FROM user WHERE username = :username", nativeQuery = true)
+    @Query(value = "SELECT * FROM admin WHERE username = :username", nativeQuery = true)
     Optional<Admin> findByUsername (String username);
 
 
-    @Query(value = "SELECT * FROM user WHERE email = :email", nativeQuery = true)
+    @Query(value = "SELECT * FROM admin WHERE email = :email", nativeQuery = true)
     Optional<Admin> findByEmail(String email);
 
 }

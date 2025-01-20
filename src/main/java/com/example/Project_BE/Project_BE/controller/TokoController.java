@@ -38,8 +38,9 @@ public class TokoController {
     @GetMapping("/toko/getAllByAdmin/{idAdmin}")
     public ResponseEntity<List<Toko>> getAllByAdmin(@PathVariable Long idAdmin) {
         List<Toko> tokoList = tokoService.getAllByAdmin(idAdmin);
-        return ResponseEntity.ok(tokoList);
+        return ResponseEntity.ok(tokoList); // Pastikan data ini memiliki namaMakanan dan harga
     }
+
 
     @GetMapping("/toko/getById/{id}")
     public ResponseEntity<Toko> getTokoById(@PathVariable Long id) {
