@@ -1,7 +1,5 @@
 package com.example.Project_BE.Project_BE.controller;
 
-
-
 import com.example.Project_BE.Project_BE.DTO.PasswordDTO;
 import com.example.Project_BE.Project_BE.exception.CommonResponse;
 import com.example.Project_BE.Project_BE.exception.ResponseHelper;
@@ -21,40 +19,46 @@ import java.util.Map;
 public class AdminController {
 
     @Autowired
-    private AdminService adminService;  // Sesuaikan service untuk Admin
+    private AdminService adminService;  // Menyesuaikan service untuk Admin
 
+    // Endpoint untuk mendaftar admin
     @PostMapping("/register")
     public ResponseEntity<Admin> registerAdmin(@RequestBody Admin admin) {
-        Admin registeredAdmin = adminService.registerAdmin(admin);  // Gunakan registerAdmin untuk admin
+        Admin registeredAdmin = adminService.registerAdmin(admin);  // Mendaftar admin baru
         return new ResponseEntity<>(registeredAdmin, HttpStatus.CREATED);
     }
 
-    @GetMapping("/admin/{id}")  // Ubah user menjadi admin
-    public ResponseEntity<Admin> getAdminById(@PathVariable Long id) {  // Ubah user menjadi admin
-        Admin admin = adminService.getById(id);  // Ganti userService ke adminService
+    // Endpoint untuk mendapatkan admin berdasarkan ID
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<Admin> getAdminById(@PathVariable Long id) {
+        Admin admin = adminService.getById(id);  // Mengambil admin berdasarkan ID
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
 
-    @GetMapping("/admins")  // Ubah users menjadi admins
-    public ResponseEntity<List<Admin>> getAllAdmins() {  // Ubah users menjadi admins
-        List<Admin> admins = adminService.getAll();  // Ganti userService ke adminService
+    // Endpoint untuk mendapatkan semua admin
+    @GetMapping("/admins")
+    public ResponseEntity<List<Admin>> getAllAdmins() {
+        List<Admin> admins = adminService.getAll();  // Mengambil semua admin
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
 
-    @PutMapping("/admin/edit/{id}")  // Ubah user menjadi admin
-    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {  // Ubah user menjadi admin
-        Admin updatedAdmin = adminService.edit(id, admin);  // Ganti userService ke adminService
+    // Endpoint untuk mengedit data admin
+    @PutMapping("/admin/edit/{id}")
+    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {
+        Admin updatedAdmin = adminService.edit(id, admin);  // Mengedit data admin berdasarkan ID
         return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
     }
 
-    @PutMapping("/admin/edit-password/{id}")  // Ubah user menjadi admin
-    public CommonResponse<Admin> updateAdminPassword(@RequestBody PasswordDTO password, @PathVariable Long id) {  // Ubah user menjadi admin
-        return ResponseHelper.ok(adminService.putPasswordAdmin(password, id));  // Ganti userService ke adminService
+    // Endpoint untuk mengupdate password admin
+    @PutMapping("/admin/edit-password/{id}")
+    public CommonResponse<Admin> updateAdminPassword(@RequestBody PasswordDTO password, @PathVariable Long id) {
+        return ResponseHelper.ok(adminService.putPasswordAdmin(password, id));  // Mengupdate password admin
     }
 
-    @DeleteMapping("/admin/delete/{id}")  // Ubah user menjadi admin
-    public ResponseEntity<Map<String, Boolean>> deleteAdmin(@PathVariable Long id) {  // Ubah user menjadi admin
-        Map<String, Boolean> response = adminService.delete(id);  // Ganti userService ke adminService
+    // Endpoint untuk menghapus admin
+    @DeleteMapping("/admin/delete/{id}")
+    public ResponseEntity<Map<String, Boolean>> deleteAdmin(@PathVariable Long id) {
+        Map<String, Boolean> response = adminService.delete(id);  // Menghapus admin berdasarkan ID
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

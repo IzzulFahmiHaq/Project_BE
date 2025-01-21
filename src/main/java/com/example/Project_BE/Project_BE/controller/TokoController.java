@@ -1,53 +1,58 @@
 package com.example.Project_BE.Project_BE.controller;
 
 import com.example.Project_BE.Project_BE.DTO.TokoDTO;
+import com.example.Project_BE.Project_BE.model.Toko;
+import com.example.Project_BE.Project_BE.service.TokoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.Project_BE.Project_BE.model.Toko;
-import com.example.Project_BE.Project_BE.service.TokoService;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin")  // Endpoint untuk admin
 public class TokoController {
 
     private final TokoService tokoService;
 
     // Menambahkan direktori tempat menyimpan gambar
-    private static final String IMAGE_DIRECTORY = "/path/to/your/images"; // Ganti dengan path yang sesuai
+    private static final String IMAGE_DIRECTORY = "src/main/resources/static/images"; // Ganti dengan path yang sesuai
 
-    public TokoController(TokoService tokoService, TokoService tokoService1) {
-        this.tokoService = tokoService1;
-
+    public TokoController(TokoService tokoService) {
+        this.tokoService = tokoService;
     }
 
+    // Endpoint untuk mendapatkan semua toko dalam bentuk Toko
     @GetMapping("/toko/all")
     public ResponseEntity<List<Toko>> getAllToko() {
         List<Toko> tokoList = tokoService.getAllToko();
         return ResponseEntity.ok(tokoList);
     }
 
+    // Endpoint untuk mendapatkan semua toko berdasarkan ID Admin
     @GetMapping("/toko/getAllByAdmin/{idAdmin}")
     public ResponseEntity<List<Toko>> getAllByAdmin(@PathVariable Long idAdmin) {
         List<Toko> tokoList = tokoService.getAllByAdmin(idAdmin);
-        return ResponseEntity.ok(tokoList); // Pastikan data ini memiliki namaMakanan dan harga
+        return ResponseEntity.ok(tokoList);
     }
 
-
+    // Endpoint untuk mendapatkan toko berdasarkan ID
     @GetMapping("/toko/getById/{id}")
     public ResponseEntity<Toko> getTokoById(@PathVariable Long id) {
         Optional<Toko> toko = tokoService.getTokoById(id);
         return toko.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Endpoint untuk menambah toko
     @PostMapping("/toko/tambah/{idAdmin}")
     public ResponseEntity<TokoDTO> tambahToko(
             @PathVariable Long idAdmin,
@@ -56,20 +61,42 @@ public class TokoController {
         return ResponseEntity.ok(savedTokoDTO);
     }
 
+    // Endpoint untuk mengedit toko
     @PutMapping(value = "/toko/editById/{id}")
     public ResponseEntity<TokoDTO> editToko(
             @PathVariable Long id,
             @RequestParam Long idAdmin,
             @RequestPart(value = "toko") TokoDTO tokoDTO) throws IOException {
-
         TokoDTO updatedToko = tokoService.editTokoDTO(id, idAdmin, tokoDTO);
         return ResponseEntity.ok(updatedToko);
     }
 
+    // Endpoint untuk menghapus toko
     @DeleteMapping("/toko/delete/{id}")
     public ResponseEntity<Void> deleteToko(@PathVariable Long id) throws IOException {
         tokoService.deleteToko(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Endpoint untuk mengupload gambar
+    @PostMapping("/toko/uploadFoto")
+    public ResponseEntity<String> uploadFoto(@RequestParam("file") MultipartFile file) {
+        try {
+            // Buat nama file unik menggunakan UUID
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(IMAGE_DIRECTORY, fileName);
+
+            // Simpan file ke direktori yang telah ditentukan
+            Files.copy(file.getInputStream(), path);
+
+            // URL untuk mengakses gambar yang telah diupload
+            String imageUrl = "http://localhost:8080/api/admin/toko/foto/" + fileName;
+
+            return ResponseEntity.ok(imageUrl);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Gagal mengunggah gambar");
+        }
     }
 
     // Endpoint untuk menampilkan foto berdasarkan URL
