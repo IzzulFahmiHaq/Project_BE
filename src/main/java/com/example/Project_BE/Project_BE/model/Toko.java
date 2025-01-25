@@ -23,19 +23,6 @@ public class Toko {
     @Column(name = "image")
     private String image;  // Menyimpan path atau URL gambar
 
-    // Konstruktor default
-    public Toko() {
-    }
-
-    // Konstruktor dengan parameter
-    public Toko(Long id, String namaMakanan, Double harga, Admin admin, String image) {
-        this.id = id;
-        this.namaMakanan = namaMakanan;
-        this.harga = harga;
-        this.admin = admin;
-        this.image = image;
-    }
-
     // Getters and Setters
     public Long getId() {
         return id;
